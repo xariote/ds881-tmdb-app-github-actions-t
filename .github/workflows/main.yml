@@ -32,3 +32,41 @@ jobs:
 
       - name: rodar testes
         run: npm test
+
+  build-and-deploy:
+    needs: teste
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: usa o Node js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: instala dependencias
+        run: npm install
+
+      - name: cria a .env
+        run: |
+          echo "EXPO_PUBLIC_TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" > .env
+
+      - name: exporta
+        run: npx expo export:web
+
+      - name: desvia do jekyll
+        run: touch dist/.nojekyll
+
+      - name: Upload do artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy para GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
