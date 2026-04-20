@@ -10,3 +10,7 @@ export const api = axios.create({
     language: 'en',
   },
 });
+
+axios.get(
+  `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}`
+);
