@@ -1,0 +1,34 @@
+name: tmdb-app
+
+on:
+  pushes:
+    branches: ["releases"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: baixar código
+        uses: actions/checkout@v4
+
+      - name: instalar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: instalar dependências
+        run: npm ci
+
+      - name: rodar testes
+        run: npm test
