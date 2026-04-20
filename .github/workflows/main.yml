@@ -33,7 +33,7 @@ jobs:
       - name: rodar testes
         run: npm test
 
-  build-and-deploy:
+  build:
     needs: teste
     runs-on: ubuntu-latest
     environment:
@@ -51,6 +51,9 @@ jobs:
 
       - name: instala dependencias
         run: npm install
+
+      - name: Instalar Expo CLI
+        run: npm install -g expo-cli
 
       - name: cria a .env
         run: |
@@ -70,3 +73,22 @@ jobs:
       - name: Deploy para GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release
+
+      - name: Criar GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          files: app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
