@@ -1,7 +1,7 @@
 name: tmdb-app
 
 on:
-  pushes:
+  push:
     branches: ["releases"]
   workflow_dispatch:
 
